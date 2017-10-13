@@ -1,0 +1,15 @@
+dta = read.table("/home/patrick/Downloads/hw1_data.csv", header = TRUE, fill = TRUE, sep=",")
+good <- complete.cases(dta[,1])
+length(good[good==FALSE])
+mean(dta[,1][good])
+dta[,1][x>31]
+dta[dta[,1][dta > 31]]
+dta[,dta[,1][dta > 31]]
+mean(dta[,1][good])
+complete.cases(dta[,1][dta > 31])
+dta[,complete.cases(dta[,1][dta > 31])]
+mean(subset(subset(dta, Ozone>31), Temp>90)[,2])
+max(subset(dta, Month=5)[,1])
+mean(subset(dta, Month==6)[,4][complete.cases(subset(dta, Month==6)[,4])])
+max(subset(dta, Month==5)[,1][complete.cases(subset(dta, Month==5)[,1])])
+
