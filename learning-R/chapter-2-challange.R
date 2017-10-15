@@ -16,21 +16,20 @@
       
       if(pollutant=="sulfate"){
         non_na = complete.cases(pollution[,2])
-        current_csv_mean = mean(pollution[,2][non_na])
+        current_csv_mean = pollution[,2][non_na]
       }
       else if(pollutant=="nitrate"){
         non_na = complete.cases(pollution[,3])
-        current_csv_mean = mean(pollution[,3][non_na])
+        current_csv_mean = pollution[,3][non_na]
       }
       
       else{
         cat("Pollutant not recognized")
         break
       }
-      if(is.finite(current_csv_mean))
-        mean_stack = c(mean_stack, current_csv_mean)
+      
+      mean_stack = c(mean_stack, current_csv_mean)
     }
-    cat(mean_stack)
     print(mean(mean_stack))
   }
   
@@ -75,13 +74,15 @@
       
       clean_pollution_data = pollution[complete.cases(pollution),]
       
-      if(nrow(clean_pollution_data) > full_limiar)
-        correlation_vector = c(correlation_vector
-                               , clean_pollution_data[,2]/clean_pollution_data[,3])
-      
+      if(nrow(clean_pollution_data) > full_limiar){
+        #correlation_vector = c(correlation_vector, transform(clean_pollution_data[,3]/clean_pollution_data[,2])[,1])
+        correlation_vector = c(correlation_vector, cor(clean_pollution_data[,3], clean_pollution_data[,2]))
+        #print(clean_pollution_data[,3])
+        #print(clean_pollution_data[,2])
+        #print(max(transform(clean_pollution_data[,2]/clean_pollution_data[,3])[,1]))
+      }
     }
-    print(pmin(correlation_vector))
-    print(pmax(correlation_vector))
+    print(correlation_vector)
   }
   
   
