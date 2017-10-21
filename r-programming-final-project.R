@@ -51,21 +51,41 @@ RankHospital = function(state, outcome, rankOptions){
   ValidateArguments(state, outcome)
   
   state_data = GetHospitalPerState(state)
-  outcome_data = ""
+  hospitals_per_state = ""
   
-  if(outcome = "Heart Attack"){
+  if(outcome == "Heart Attack"){
       outcome_data = GetLowerHeartAttackList(state_data)
+      print(outcome_data)
+      hospitals_per_state =    subset(state_data, select=c("Hospital.Name", "Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"),
+                                      as.character(state_data$Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)
+                                      %in%sort(outcome_data, TRUE))
+      
+      hospitals_per_state = hospitals_per_state[order(decreasing = FALSE, 
+                                    as.numeric(Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)), ]
   }
   
-  if(outcome = "Pneumonia"){
+  if(outcome == "Pneumonia"){
       outcome_data = GetLowerHeartAttackList(state_data)
+      hospitals_per_state =    subset(state_data, select=c("Hospital.Name", "Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"),
+                                      as.character(state_data$Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)
+                                      %in%sort(outcome_data, TRUE))
+      
+      hospitals_per_state = hospitals_per_state[order(decreasing = FALSE, 
+                                    as.numeric(Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)), ]
   }
   
-  if(outcome = "Heart Failure"){
+  if(outcome == "Heart Failure"){
       outcome_data = GetLowerHeartAttackList(state_data)
+      hospitals_per_state = subset(state_data, select=c("Hospital.Name", "Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"),
+                                as.character(state_data$Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)
+                                %in%sort(outcome_data, TRUE))
+      
+      hospitals_per_state = hospitals_per_state[order(decreasing = FALSE, 
+                                as.numeric(Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)), ]
   }
   
-  print(outcome_data)
+  rank_list = c(1:length(hospitals_per_state[,2]))
+  hospitals_per_state$rank = rank_list
 }
 
 GetLowerHeartAttackList = function(state_date){
