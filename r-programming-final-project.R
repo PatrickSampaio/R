@@ -10,11 +10,11 @@ BuildHistogram = function(){
   hist(histogram_dataset)
 }
 
-GetHospitalPerState(nameState){
+GetHospitalPerState = function(nameState){
   return(subset(hospital_dataset, hospital_dataset$State==nameState))
 }
 
-ValidateArguments(nameState, outcomeName){
+ValidateArguments= function(nameState, outcomeName){
   if(!nameState%in%VALID_STATES){
     print("Invalid State")
     return(FALSE)
@@ -29,7 +29,7 @@ ValidateArguments(nameState, outcomeName){
 
 BestHospital = function(nameState, outcomeName){
   
-  if(ValidateArguments==FALSE)
+  if(ValidateArguments(nameState, outcomeName)==FALSE)
     return()
   
   state_data = GetHospitalPerState(nameState)
@@ -48,11 +48,24 @@ BestHospital = function(nameState, outcomeName){
 }
 
 RankHospital = function(state, outcome, rankOptions){
-  ValidateArguments(state)
+  ValidateArguments(state, outcome)
   
-  state_data = GetHospitalPerState(nameState)
+  state_data = GetHospitalPerState(state)
+  outcome_data = ""
   
+  if(outcome = "Heart Attack"){
+      outcome_data = GetLowerHeartAttackList(state_data)
+  }
   
+  if(outcome = "Pneumonia"){
+      outcome_data = GetLowerHeartAttackList(state_data)
+  }
+  
+  if(outcome = "Heart Failure"){
+      outcome_data = GetLowerHeartAttackList(state_data)
+  }
+  
+  print(outcome_data)
 }
 
 GetLowerHeartAttackList = function(state_date){
@@ -61,6 +74,22 @@ GetLowerHeartAttackList = function(state_date){
   
   filtered_heartattack_rates = list_heartattack_rates[complete.cases(list_heartattack_rates)]
   return(filtered_heartattack_rates)
+}
+
+GetLowerPneumoniaList = function(state_data){
+  list_pneumonia_rates = state_data$Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia
+  list_pneumonia_rates = as.numeric(list_pneumonia_rates)
+  
+  filtered_pneumonia_rates = list_pneumonia_rates[complete.cases(list_pneumonia_rates)]
+  return(filtered_pneumonia_rates)
+}
+
+GetLowerHeartFailureList = function(state_data){
+  list_heartfailure_rates = state_data$Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure
+  list_heartfailure_rates = as.numeric(list_heartfailure_rates)
+  
+  filtered_heartfailure_rates = list_heartfailure_rates[complete.cases(list_heartfailure_rates)]
+  return(filtered_heartfailure_rates)
 }
 
 GetLowestHeartAttack = function(state_data){
@@ -74,14 +103,6 @@ GetLowestHeartAttack = function(state_data){
   return(best_hospital$Hospital.Name)
 }
 
-GetLowerPneumoniaList = function(state_data){
-  list_pneumonia_rates = state_data$Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia
-  list_pneumonia_rates = as.numeric(list_pneumonia_rates)
-  
-  filtered_pneumonia_rates = list_pneumonia_rates[complete.cases(list_pneumonia_rates)]
-  return(filtered_pneumonia_rates)
-}
-
 GetLowestPneumonia = function(state_data){
   filtered_pneumonia_rates = GetLowerPneumoniaList(state_data)
   
@@ -92,14 +113,6 @@ GetLowestPneumonia = function(state_data){
                          ==minimal_pneumonia_rate)
   
   return(best_hospital$Hospital.Name)
-}
-
-GetLowerHeartFailureList = function(state_data){
-  list_heartfailure_rates = state_data$Lower.Mortality.Estimate...Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure
-  list_heartfailure_rates = as.numeric(list_heartfailure_rates)
-  
-  filtered_heartfailure_rates = list_heartfailure_rates[complete.cases(list_heartfailure_rates)]
-  return(filtered_heartfailure_rates)
 }
 
 GetLowestHeartFailure = function(state_data){
