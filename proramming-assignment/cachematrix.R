@@ -1,7 +1,7 @@
 ## Put comments here that give an overall description of what your
 ## functions do
 
-## Write a short comment describing this function
+## Extension to the list type
 
 makeCacheMatrix <- function(matrix_value = matrix()) {
   cached_matrix_value = NULL
@@ -18,7 +18,7 @@ makeCacheMatrix <- function(matrix_value = matrix()) {
 }
 
 
-## Write a short comment describing this function
+## Logic behind the caching of the inverse of the matrix
 
 cacheSolve <- function(x, ...) {
        cached_inverse = x$getinverse()
