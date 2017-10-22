@@ -47,16 +47,47 @@ BestHospital = function(nameState, outcomeName){
   return(hospital)
 }
 
-RankHospital = function(state, outcome, rankOptions){
-  ValidateArguments(state, outcome)
-  rank = rankOptions
-  
-  state_data = GetHospitalPerState(state)
-  hospitals_per_state = ""
-  
-  if(outcome == "Heart Attack"){
-    outcome_data = GetLowerHeartAttackList(state_data)
-    hospitals_per_state = subset(state_data, select=c("Hospital.Name", "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack"))
+RankAllHospitals = function(outcome, index){
+ hospitals_outcome_state = RankHospitalDataSet(hospital_dataset, outcome)
+ hospital_states = sort(unique(hospitals_outcome_state["State"][,1]))
+
+ current_outcome_df = data.frame()
+ 
+ for(state in hospital_states){
+    hospitals_current_state = subset(hospitals_outcome_state, hospitals_outcome_state$State==state)
+    current_state = hospitals_current_state[,3][[1]]
+    current_hospital = hospitals_current_state[,1][[1]]
+    
+    hospitals_names = hospitals_current_state[,1]
+    
+    if(is.numeric(index)){
+      if(length(hospitals_names) < index)
+        print("RankNumber is beyound the hospitals quantities")
+      else
+        current_hospital = hospitals_names[index]
+    }
+    if(c(rank)%in%"worst")
+      current_hospital = hospitals_names[length(hospitals_names)]
+    if(c(rank)%in%"best")
+      current_hospital = hospitals_names[1]
+    
+    print("-----------------------------------------------------------")
+    print(current_state)
+    print(hospitals_current_state[,1])
+    print("-----------------------------------------------------------")
+
+    best_hospital_state = data.frame(current_hospital, current_state)
+    names(best_hospital_state) = c("Hospital.Name", "State")
+    current_outcome_df = rbind(current_outcome_df, best_hospital_state)
+ }
+ print(current_outcome_df)
+}
+
+RankHospitalDataSet = function(hospitals_selecteds, outcome){
+ hospitals_per_state = ""
+ if(outcome == "Heart Attack"){
+    outcome_data = GetLowerHeartAttackList(hospitals_selecteds)
+    hospitals_per_state = subset(hospitals_selecteds, select=c("Hospital.Name", "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack", "State"))
     
     hospitals_per_state$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack =
       as.numeric(hospitals_per_state$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack)
@@ -67,8 +98,7 @@ RankHospital = function(state, outcome, rankOptions){
   }
   
   if(outcome == "Pneumonia"){
-      outcome_data = GetLowerPneumoniaList(state_data)
-      hospitals_per_state =    subset(state_data, select=c("Hospital.Name", "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"))
+      hospitals_per_state = subset(hospitals_selecteds, select=c("Hospital.Name", "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia", "State"))
       
       hospitals_per_state$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia =
         as.numeric(hospitals_per_state$Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia)
@@ -79,7 +109,7 @@ RankHospital = function(state, outcome, rankOptions){
   }
   
   if(outcome == "Heart Failure"){
-      hospitals_per_state = subset(state_data, select=c("Hospital.Name", "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure"))
+      hospitals_per_state = subset(hospitals_selecteds, select=c("Hospital.Name", "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure", "State"))
       
       hospitals_per_state$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure =
         as.numeric(hospitals_per_state$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure)
@@ -88,7 +118,18 @@ RankHospital = function(state, outcome, rankOptions){
                                                       hospitals_per_state$Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure,
                                                       hospitals_per_state$Hospital.Name), ]
   }
+  return(hospitals_per_state)
+}
+
+RankHospital = function(state, outcome, rankOptions){
+  ValidateArguments(state, outcome)
+  rank = rankOptions
   
+  state_data = GetHospitalPerState(state)
+  hospitals_per_state = ""
+ 
+  hospitals_per_state = RankHospitalDataSet(state_data, outcome)  
+    
   rank_list = c(1:length(hospitals_per_state[,2]))
   hospitals_per_state$rank = rank_list
   print(rank)
